@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 three = "0.4"
 cgmath = "0.16"
+random_color = "0.4"

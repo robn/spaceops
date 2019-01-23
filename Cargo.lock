@@ -1454,6 +1454,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "random_color"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "33f220313911bda3f4e96069b3e2b005978543d5035d2638e40905b201d18549"
+dependencies = [
+ "rand 0.3.23",
+]
+
+[[package]]
 name = "rayon"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1669,6 +1678,7 @@ name = "spaceops"
 version = "0.1.0"
 dependencies = [
  "cgmath 0.16.1",
+ "random_color",
  "three",
 ]
 

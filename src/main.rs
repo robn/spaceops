@@ -1,5 +1,6 @@
 extern crate three;
 extern crate cgmath;
+extern crate random_color;
 
 use three::Object;
 use cgmath::{Quaternion,Deg,Rotation3};
@@ -93,7 +94,8 @@ fn release_mouse(win: &three::Window) {
 }
 
 fn make_objects(factory: &mut three::Factory, n: u8) -> Vec<three::Mesh> {
-    let geom = three::Geometry::cuboid(1.0, 1.0, 1.0);
+    let geom = factory.upload_geometry(three::Geometry::cuboid(1.0, 1.0, 1.0));
+
     //println!("{:#?}", geom.base.vertices);
     /*
     geom.tex_coords = vec!(
@@ -129,10 +131,12 @@ fn make_objects(factory: &mut three::Factory, n: u8) -> Vec<three::Mesh> {
     );
     */
 
+    /*
     let mat = three::material::Lambert {
         color: 0x33aa33,
         flat: false,
     };
+    */
     /*
     let mat = three::material::Phong {
         color: 0x33aa33,
@@ -148,9 +152,16 @@ fn make_objects(factory: &mut three::Factory, n: u8) -> Vec<three::Mesh> {
     };
     */
 
-    let mesh = factory.mesh(geom, mat);
-
-    (0u8..n).map(|_| factory.mesh_instance(&mesh)).collect()
+    (0u8..n).map(|_|
+                 factory.create_instanced_mesh(&geom,
+                                               three::material::Lambert {
+                                                   color: {
+                                                       let c = random_color::RandomColor::new().to_rgb_array();
+                                                        c[0] << 16 | c[1] << 8 | c[2]
+                                                   },
+                                                   flat: false,
+                                               })
+                 ).collect()
 
     /*
     let group = factory.group();
