@@ -1,0 +1,9 @@
+[package]
+name = "spaceops"
+version = "0.1.0"
+authors = ["Rob N ★ <robn@robn.io>"]
+edition = "2018"
+
+[dependencies]
+three = "0.4"
+cgmath = "0.16"
