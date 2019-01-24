@@ -6,6 +6,9 @@ use three::Object;
 use cgmath::{Quaternion,Deg,Rotation3};
 use std::f32;
 
+mod wrapped_mesh;
+use wrapped_mesh::WrappedMesh;
+
 const GAP: f32 = 1.6;
 const NUM: u8 = 9;
 
@@ -17,13 +20,13 @@ fn main() {
     let camera = win.factory.perspective_camera(60.0, 1.0 .. 100.0);
     camera.look_at([0.0, 0.0, 5.0], [0.0, 0.0, 0.0], None);
 
-    let meshes = make_objects(&mut win.factory, NUM);
+    let mut meshes = make_objects(&mut win.factory, NUM);
 
     let group = win.factory.group();
-    meshes.iter().for_each(|m| group.add(m));
+    meshes.iter().for_each(|m| group.add(&m.mesh));
     win.scene.add(&group);
 
-    meshes.iter().zip(make_object_positions(NUM).iter()).for_each(|(m, p)| m.set_position(*p));
+    meshes.iter_mut().zip(make_object_positions(NUM).iter()).for_each(|(m, p)| m.set_position(*p));
 
     let point_light = win.factory.point_light(0xffffff, 0.7);
     point_light.set_position([0.0, 0.0, 20.0]);
@@ -89,7 +92,7 @@ fn release_mouse(win: &three::Window) {
     win.glutin_window().hide_cursor(false);
 }
 
-fn make_objects(factory: &mut three::Factory, n: u8) -> Vec<three::Mesh> {
+fn make_objects(factory: &mut three::Factory, n: u8) -> Vec<WrappedMesh> {
     let geom = factory.upload_geometry(three::Geometry::cuboid(1.0, 1.0, 1.0));
 
     (0u8..n).map(|_| {
@@ -100,7 +103,7 @@ fn make_objects(factory: &mut three::Factory, n: u8) -> Vec<three::Mesh> {
             },
             flat: false,
         };
-        factory.create_instanced_mesh(&geom, mat)
+        WrappedMesh::new(factory.create_instanced_mesh(&geom, mat))
     }).collect()
 }
 
