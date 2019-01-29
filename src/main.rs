@@ -1,10 +1,9 @@
-extern crate three;
-extern crate cgmath;
-extern crate random_color;
-
 use three::Object;
 use cgmath::{Quaternion,Deg,Rotation3};
 use std::f32;
+
+mod animator;
+use animator::PositionAnimator;
 
 mod wrapped_mesh;
 use wrapped_mesh::WrappedMesh;
@@ -34,6 +33,8 @@ fn main() {
 
     let (mut rx, mut ry) = (0.0, 0.0);
     let (mut x, mut y) = (0.0, 0.0);
+
+    let mut anim = PositionAnimator::new([1.0,1.0,1.0].into(), [3.0,-3.0,2.0].into(), 3.0);
 
     while win.update() && !win.input.hit(three::KEY_ESCAPE) {
 
@@ -77,6 +78,8 @@ fn main() {
         group.set_orientation(qx*qy);
 
         group.set_position([x, y, 0.0]);
+
+        meshes[0].set_position(anim.next_position());
 
         win.render(&camera);
     }
