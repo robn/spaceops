@@ -40,8 +40,6 @@ pub struct ItemGroup {
     geom: three::template::InstancedGeometry,
 
     items: BTreeMap<String,Item>,
-
-    gap: f32,
 }
 
 impl ItemGroup {
@@ -51,7 +49,6 @@ impl ItemGroup {
         ItemGroup {
             geom: geom,
             items: BTreeMap::new(),
-            gap: GAP,
         }
     }
 
@@ -92,9 +89,9 @@ impl ItemGroup {
 
     fn make_object_positions(&self, n: usize) -> Vec<[f32; 3]> {
         let w: u16 = f32::from(n as u16).sqrt().ceil() as u16;
-        let off = self.gap * ((w as f32) - 1.0) * 0.5;
+        let off = GAP * ((w as f32) - 1.0) * 0.5;
         (0u16..n as u16).fold(vec!(), |mut vv, nn| {
-            vv.push([f32::from(nn % w) * self.gap - off, f32::from(nn / w) * self.gap - off, 0.0]);
+            vv.push([f32::from(nn % w) * GAP - off, f32::from(nn / w) * GAP - off, 0.0]);
             vv
         })
     }
