@@ -38,7 +38,6 @@ impl Eq for Item { }
 
 pub struct ItemGroup {
     geom: three::template::InstancedGeometry,
-    pub group: three::Group,
 
     items: BTreeMap<String,Item>,
 
@@ -48,17 +47,15 @@ pub struct ItemGroup {
 impl ItemGroup {
     pub fn new(factory: &mut three::Factory) -> ItemGroup {
         let geom = factory.upload_geometry(three::Geometry::cuboid(1.0, 1.0, 1.0));
-        let group = factory.group();
 
         ItemGroup {
             geom: geom,
-            group: group,
             items: BTreeMap::new(),
             gap: GAP,
         }
     }
 
-    pub fn add(&mut self, factory: &mut three::Factory, name: &str) {
+    pub fn add(&mut self, scene: &mut three::Scene, factory: &mut three::Factory, name: &str) {
         let mat = three::material::Lambert {
             color: {
                 let c = random_color::RandomColor::new().to_rgb_array();
@@ -71,14 +68,14 @@ impl ItemGroup {
             name: name.into(),
             wm: wm,
         };
-        self.group.add(&item.wm.mesh);
+        scene.add(&item.wm.mesh);
         self.items.insert(item.name.clone(), item);
         self.layout();
     }
 
-    pub fn remove(&mut self, name: &str) {
+    pub fn remove(&mut self, scene: &mut three::Scene, name: &str) {
         if let Some(item) = self.items.get(name) {
-            self.group.remove(&item.wm.mesh);
+            scene.remove(&item.wm.mesh);
         }
         self.items.remove(name);
         self.layout();

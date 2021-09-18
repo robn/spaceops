@@ -20,10 +20,8 @@ fn main() {
     win.scene.background = three::Background::Color(0x000000);
 
     let camera = win.factory.perspective_camera(60.0, 1.0 .. 100.0);
-    camera.look_at([0.0, 0.0, 5.0], [0.0, 0.0, 0.0], None);
 
     let mut item_group = ItemGroup::new(&mut win.factory);
-    win.scene.add(&item_group.group);
 
     let point_light = win.factory.point_light(0xffffff, 0.7);
     point_light.set_position([0.0, 0.0, 20.0]);
@@ -55,11 +53,11 @@ fn main() {
         if win.input.hit(three::Key::Z) {
             let e = world.spawn((Item,));
             entities.push(e);
-            item_group.add(&mut win.factory, &e.id().to_string());
+            item_group.add(&mut win.scene, &mut win.factory, &e.id().to_string());
         }
         if win.input.hit(three::Key::X) {
             if let Some(e) = entities.pop() {
-                item_group.remove(&e.id().to_string());
+                item_group.remove(&mut win.scene, &e.id().to_string());
                 world.despawn(e);
             }
         }
@@ -86,9 +84,11 @@ fn main() {
 
         let qx = Quaternion::from_angle_y(Deg(rx));
         let qy = Quaternion::from_angle_x(Deg(ry));
-        item_group.group.set_orientation(qx*qy);
+        //item_group.group.set_orientation(qx*qy);
+        camera.set_orientation(qx*qy);
 
-        item_group.group.set_position([x, y, 0.0]);
+        //item_group.group.set_position([x, y, 0.0]);
+        camera.set_position([x, y, 5.0]);
 
         //meshes[0].set_position(anim.next_position());
 
