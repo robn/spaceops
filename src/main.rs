@@ -1,15 +1,20 @@
+use hecs::*;
 use three::Object;
 use cgmath::{Quaternion,Deg,Rotation3};
 
+mod component;
 mod animator;
 mod wrapped_mesh;
 mod item_group;
 
-use animator::PositionAnimator;
-use wrapped_mesh::WrappedMesh;
-use item_group::ItemGroup;
+use crate::component::*;
+use crate::animator::PositionAnimator;
+use crate::wrapped_mesh::WrappedMesh;
+use crate::item_group::ItemGroup;
 
 fn main() {
+    let mut world = World::new();
+
     let mut win = three::Window::new("🚀 spaceops 🛰️");
 
     win.scene.background = three::Background::Color(0x000000);
@@ -28,7 +33,7 @@ fn main() {
     let (mut x, mut y) = (0.0, 0.0);
 
     //let mut anim = PositionAnimator::new([1.0,1.0,1.0].into(), [3.0,-3.0,2.0].into(), 3.0);
-    let mut objnum = 0;
+    let mut entities = vec!();
 
     while win.update() && !win.input.hit(three::KEY_ESCAPE) {
 
@@ -48,13 +53,14 @@ fn main() {
         }
 
         if win.input.hit(three::Key::Z) {
-            objnum = objnum + 1;
-            item_group.add(&mut win.factory, &objnum.to_string());
+            let e = world.spawn((Item,));
+            entities.push(e);
+            item_group.add(&mut win.factory, &e.id().to_string());
         }
         if win.input.hit(three::Key::X) {
-            if objnum > 1 {
-                item_group.remove(&objnum.to_string());
-                objnum = objnum - 1;
+            if let Some(e) = entities.pop() {
+                item_group.remove(&e.id().to_string());
+                world.despawn(e);
             }
         }
 
